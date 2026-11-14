@@ -1,0 +1,6 @@
+out*.txt
+chk*.db
+_cfg.tmp
+*.tmp
+__pycache__/
+*.pyc
