@@ -143,7 +143,6 @@ if not defined PY goto NOPY
 
 "%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db'" > "%BASE%_cfg.tmp" 2>nul
 "%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db-wal'" > "%BASE%_cfg.tmp-wal" 2>nul
-"%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db-shm'" > "%BASE%_cfg.tmp-shm" 2>nul
 set "FSZ=0"
 set "WSZ=0"
 for %%i in ("%BASE%_cfg.tmp") do set "FSZ=%%~zi"
