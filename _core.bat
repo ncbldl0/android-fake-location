@@ -92,12 +92,16 @@ echo    LSPosed: OK
 set "PSZ=0"
 "%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db'" > "%BASE%_probe.tmp" 2>nul
 for %%i in ("%BASE%_probe.tmp") do set "PSZ=%%~zi"
-echo    配置库: !PSZ! 字节
-if !PSZ! GEQ 10000 goto PROBE_OK
+set "WSZ=0"
+"%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db-wal'" > "%BASE%_probe.tmp-wal" 2>nul
+for %%i in ("%BASE%_probe.tmp-wal") do set "WSZ=%%~zi"
+set /a TSZ=PSZ+WSZ
+echo    配置库: !PSZ! 字节 + WAL !WSZ! 字节
+if !TSZ! GEQ 10000 goto PROBE_OK
 echo    读不到配置内容，下面是设备上的实际目录：
 "%ADB%" -s !SERIAL! shell "su -c 'ls -l /data/adb/lspd/config/'" 2>&1
 :PROBE_OK
-del "%BASE%_probe.tmp" >nul 2>nul
+del "%BASE%_probe.tmp" "%BASE%_probe.tmp-wal" >nul 2>nul
 echo.
 goto S4
 
@@ -138,9 +142,15 @@ if not defined PY (
 if not defined PY goto NOPY
 
 "%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db'" > "%BASE%_cfg.tmp" 2>nul
+"%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db-wal'" > "%BASE%_cfg.tmp-wal" 2>nul
+"%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db-shm'" > "%BASE%_cfg.tmp-shm" 2>nul
 set "FSZ=0"
+set "WSZ=0"
 for %%i in ("%BASE%_cfg.tmp") do set "FSZ=%%~zi"
-if !FSZ! LSS 10000 goto PULLFAIL
+for %%i in ("%BASE%_cfg.tmp-wal") do set "WSZ=%%~zi"
+if !WSZ! EQU 0 del "%BASE%_cfg.tmp-wal" >nul 2>nul
+set /a TSZ=FSZ+WSZ
+if !TSZ! LSS 10000 goto PULLFAIL
 
 if /i "!MODE!"=="stop" goto DO_STOP
 %PY% "%BASE%apply_db.py" "%BASE%_cfg.tmp" !LAT! !LNG! "!FAKE_PATH!" "!CELL_PATH!"

@@ -38,6 +38,17 @@ def set_enabled(cur, pkg, on):
     )
 
 
+
+def open_db(path):
+    """打开 db，并把 -wal 里的未提交页面合并进来。"""
+    con = sqlite3.connect(path)
+    try:
+        con.execute("pragma wal_checkpoint(truncate)")
+    except sqlite3.DatabaseError:
+        pass
+    return con
+
+
 def check(con):
     """确认这是一份可用的 LSPosed 配置，而不是空文件或别的数据库。"""
     rows = con.execute("select name from sqlite_master where type='table'").fetchall()
@@ -52,7 +63,7 @@ def check(con):
 
 
 def stop(db):
-    con = sqlite3.connect(db)
+    con = open_db(db)
     check(con)
     cur = con.cursor()
     for pkg in (FAKE, CELL):
@@ -70,7 +81,7 @@ def stop(db):
 
 
 def apply(db, lat, lng, fake_apk, cell_apk):
-    con = sqlite3.connect(db)
+    con = open_db(db)
     check(con)
     cur = con.cursor()
 
