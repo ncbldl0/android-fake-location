@@ -4,3 +4,4 @@ _cfg.tmp
 *.tmp
 __pycache__/
 *.pyc
+_*.db
