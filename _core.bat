@@ -128,10 +128,10 @@ if not defined PY (
 )
 if not defined PY goto NOPY
 
-"%ADB%" -s !SERIAL! shell "su -c 'killall lspd'" >nul 2>nul
-ping -n 2 127.0.0.1 >nul
 "%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db'" > "%BASE%_cfg.tmp" 2>nul
-if not exist "%BASE%_cfg.tmp" goto PULLFAIL
+set "FSZ=0"
+for %%i in ("%BASE%_cfg.tmp") do set "FSZ=%%~zi"
+if !FSZ! LSS 10000 goto PULLFAIL
 
 if /i "!MODE!"=="stop" goto DO_STOP
 %PY% "%BASE%apply_db.py" "%BASE%_cfg.tmp" !LAT! !LNG! "!FAKE_PATH!" "!CELL_PATH!"
@@ -156,7 +156,9 @@ echo    请打开 XposedFakeLocation 手动点地图选点
 goto S6
 
 :PULLFAIL
-echo    拉取配置失败
+echo    拉取配置失败（文件为空或不是 LSPosed 配置）
+echo    设备未做任何改动，重启手机后重试
+del "%BASE%_cfg.tmp" >nul 2>nul
 goto S6
 
 :PUSHFAIL

@@ -38,8 +38,22 @@ def set_enabled(cur, pkg, on):
     )
 
 
+def check(con):
+    """确认这是一份可用的 LSPosed 配置，而不是空文件或别的数据库。"""
+    rows = con.execute("select name from sqlite_master where type='table'").fetchall()
+    tables = {r[0] for r in rows}
+    need = {"modules", "modules_state", "scope", "module_configs"}
+    missing = need - tables
+    if missing:
+        raise SystemExit(
+            "[db] 拉到的文件里缺少表 %s，说明没有取到真正的配置，已中止（设备未改动）"
+            % ",".join(sorted(missing))
+        )
+
+
 def stop(db):
     con = sqlite3.connect(db)
+    check(con)
     cur = con.cursor()
     for pkg in (FAKE, CELL):
         set_enabled(cur, pkg, False)
@@ -57,6 +71,7 @@ def stop(db):
 
 def apply(db, lat, lng, fake_apk, cell_apk):
     con = sqlite3.connect(db)
+    check(con)
     cur = con.cursor()
 
     for pkg, apk in ((FAKE, fake_apk), (CELL, cell_apk)):
