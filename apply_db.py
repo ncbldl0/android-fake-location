@@ -108,6 +108,7 @@ def apply(db, lat, lng, fake_apk, cell_apk):
 
 
 def main():
+    print("[apply_db] v3  %s" % __file__)
     if len(sys.argv) < 3:
         print(__doc__)
         return 2
