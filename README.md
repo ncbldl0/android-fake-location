@@ -1,8 +1,18 @@
 # Android 虚拟定位 · 一键部署
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/Android-8.0%2B-green.svg)]()
+[![Root](https://img.shields.io/badge/Root-KernelSU%20%7C%20Magisk-red.svg)]()
+[![LSPosed](https://img.shields.io/badge/LSPosed-Required-blue.svg)]()
+
+> One-command virtual location spoofer for rooted Android with LSPosed.
+> Works with WeChat, AutoNavi (高德), and other apps that read location through both the system API and cell/Wi-Fi fingerprints.
+
 把微信、高德、QQ 等 App 的定位改到任意城市，一条命令搞定。
 
 适用于 **已 root + 已装 LSPosed** 的 Android 手机，不改系统文件，不装 Xposed 框架本体，卸载即恢复。
+
+> 仅供学习与技术研究使用，请遵守当地法律法规及目标应用的用户协议。
 
 ---
 
