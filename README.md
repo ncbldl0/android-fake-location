@@ -180,6 +180,14 @@ Boolean: ac ed 00 05 73 72 00 11 java.lang.Boolean ... 01
 
 把 `platform-tools` 文件夹放到项目根目录。脚本按这个顺序找：本目录 `platform-tools\adb.exe` → `C:\platform-tools\adb.exe` → 系统 PATH。
 
+**提示「拉取配置失败」或 Python 报 `no such table: modules`？**
+
+拉 LSPosed 配置文件时没读到东西（拿到了空文件）。脚本会在这步停下，设备不会被改动。
+
+重启手机，拔插一次 USB，确认 `adb devices` 能看到设备，再跑一遍就行。
+
+早先版本会在拉取前执行 `killall lspd`，LSPosed 守护进程重启的瞬间读不到文件，才会出现这个报错。现在已经去掉这一步，并且加了文件大小和表结构双重校验。
+
 **提示没找到 Python？**
 
 装一个 Python 3（勾选 Add to PATH），或者打开 XposedFakeLocation 手动点地图选点——坐标存在 App 里，效果一样。
