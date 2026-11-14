@@ -89,6 +89,15 @@ echo    root: OK
 "%ADB%" -s !SERIAL! shell "su -c 'test -f /data/adb/lspd/config/modules_config.db'" >nul 2>nul
 if errorlevel 1 goto NOLSP
 echo    LSPosed: OK
+set "PSZ=0"
+"%ADB%" exec-out "su -c 'cat /data/adb/lspd/config/modules_config.db'" > "%BASE%_probe.tmp" 2>nul
+for %%i in ("%BASE%_probe.tmp") do set "PSZ=%%~zi"
+echo    配置库: !PSZ! 字节
+if !PSZ! GEQ 10000 goto PROBE_OK
+echo    读不到配置内容，下面是设备上的实际目录：
+"%ADB%" -s !SERIAL! shell "su -c 'ls -l /data/adb/lspd/config/'" 2>&1
+:PROBE_OK
+del "%BASE%_probe.tmp" >nul 2>nul
 echo.
 goto S4
 
